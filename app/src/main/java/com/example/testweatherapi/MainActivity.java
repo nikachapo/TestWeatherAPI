@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     String q = searchEditText.getText().toString().trim();
                     if (!q.isEmpty()) {
+                        searchEditText.getText().clear();
                         loadInfo(q);
                     } else
                         Toast.makeText(getApplicationContext(), "Enter city name", Toast.LENGTH_LONG).show();
