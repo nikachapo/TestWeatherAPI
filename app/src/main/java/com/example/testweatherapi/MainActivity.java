@@ -8,6 +8,7 @@ import android.net.NetworkRequest;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,6 +21,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -29,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_LAST_CITY_NAME = "last-city";
 
     private TextView cityText,
-            descriptionText, celsiusText;
+            descriptionText, celsiusText, timeText, windText,sunriseText,sunsetText;
     private ImageView image;
     private ProgressBar progressBar;
     private EditText searchEditText;
@@ -44,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sunriseText = findViewById(R.id.sunriseText);
+        sunsetText = findViewById(R.id.sunsetText);
+        windText = findViewById(R.id.windText);
+        timeText = findViewById(R.id.timeText);
         image = findViewById(R.id.weatherImage);
         progressBar = findViewById(R.id.progressBar);
         cityText = findViewById(R.id.cityText);
@@ -58,12 +66,19 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager inputManager =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (inputManager != null) {
+                    inputManager.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
                 if (!isConnectedToInternet) {
-                    Toast.makeText(getApplicationContext(), "Enter city name", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
                 }else {
                     progressBar.setVisibility(View.VISIBLE);
                     String q = searchEditText.getText().toString().trim();
                     if (!q.isEmpty()) {
+                        searchEditText.getText().clear();
                         loadInfo(q);
                     } else
                         Toast.makeText(getApplicationContext(), "Enter city name", Toast.LENGTH_LONG).show();
@@ -90,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(s);
 
                     JSONObject mainWeather = jsonObject.getJSONObject("main");
+                    JSONObject sysObject = jsonObject.getJSONObject("sys");
 
 
                     try {
@@ -103,10 +119,22 @@ public class MainActivity extends AppCompatActivity {
                         String description = (String) weather.get("description");
                         String cityName = (String) jsonObject.get("name");
                         double kelvinToCelsius = (double) mainWeather.get("temp") - 273.15;
+                        Integer timeMillis = (Integer) jsonObject.get("dt");
+                        Integer sunriseMillis = (Integer) sysObject.get("sunrise");
+                        Integer sunsetMillis = (Integer) sysObject.get("sunset");
+                        String time = getFormattedTime((long)timeMillis);
+                        String sunrise = getFormattedTime((long)sunriseMillis);
+                        String sunset = getFormattedTime((long)sunsetMillis);
+
+                        double wind = (double) jsonObject.getJSONObject("wind").get("speed");
 
                         descriptionText.setText(description);
                         cityText.setText(cityName);
                         celsiusText.setText(String.format("%.2f", kelvinToCelsius) + "°C");
+                        timeText.setText(time);
+                        windText.setText(wind+"kph");
+                        sunriseText.setText(sunrise);
+                        sunsetText.setText(sunset);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -124,6 +152,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }.execute(q);
 
+    }
+
+    public static String getFormattedTime(long millis) {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+
+        Date date = new Date(millis*1000);
+        return formatter.format(date);
     }
 
     @Override

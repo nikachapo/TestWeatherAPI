@@ -13,14 +13,23 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/timeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchEditText"
+        android:textColor="@android:color/white"
+        android:textSize="40sp"
+        tools:text="1:00" />
 
     <EditText
-        android:fontFamily="@font/aladin"
         android:id="@+id/searchEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/searchButton"
+        android:fontFamily="@font/aladin"
         android:hint="Enter city name"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white" />
@@ -37,10 +46,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/celsiusText"
+        android:fontFamily="@font/aladin"
         android:textColor="@android:color/white"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:fontFamily="@font/aladin"
         tools:text="Tbilisi" />
 
     <TextView
@@ -54,18 +63,46 @@
         android:textSize="20sp"
         tools:text="mostly cloud" />
 
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/weatherImage"
+        android:layout_toStartOf="@id/celsiusText"
+        android:src="@drawable/temp_icon" />
+
     <TextView
         android:id="@+id/celsiusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/weatherImage"
         android:layout_centerHorizontal="true"
+        android:fontFamily="@font/aladin"
         android:textColor="@android:color/white"
         android:textSize="30sp"
-        tools:text="32C"
-        android:fontFamily="@font/aladin"/>
+        tools:text="32C" />
 
     <ImageView
+        android:id="@+id/windImage"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_below="@id/weatherImage"
+        android:layout_toEndOf="@id/celsiusText"
+        android:src="@drawable/wind_icon" />
+
+    <TextView
+        android:id="@+id/windText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weatherImage"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/windImage"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        tools:text="44km/h" />
+
+    <ImageView
+        tools:src="@drawable/weather_icon"
         android:id="@+id/weatherImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -74,4 +111,62 @@
         android:layout_marginEnd="152dp" />
 
 
+    <ImageView
+        android:id="@+id/sunriseImage"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/sunrise_icon"
+        android:padding="16dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/sunriseImage"
+        tools:text="sunrise"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"/>
+
+    <ImageView
+        android:id="@+id/sunsetImage"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/sunset_icon"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/sunsetImage"
+        android:layout_alignParentEnd="true"
+        tools:text="sunset"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"/>
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="5dp"
+        android:background="@android:color/holo_green_light"
+        android:layout_toEndOf="@id/sunriseImage"
+        android:layout_toStartOf="@id/sunsetImage"
+        android:layout_marginBottom="48dp"
+        android:layout_alignParentBottom="true"
+        />
+
+    <TextView
+        android:id="@+id/sunriseText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/line"
+        android:layout_toEndOf="@id/sunriseImage"
+        tools:text="22:00"
+        android:textColor="@android:color/white"/>
+    <TextView
+        android:id="@+id/sunsetText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/line"
+        android:layout_toStartOf="@id/sunsetImage"
+        tools:text="22:00"
+        android:textColor="@android:color/white"/>
 </RelativeLayout>
