@@ -3,6 +3,7 @@ package com.example.testweatherapi;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -71,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //stop updates
+                locationManager.removeUpdates(locationListener);
+
                 InputMethodManager inputManager =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (inputManager != null) {
@@ -148,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String description = (String) weather.get("description");
                 String cityName = (String) jsonObject.get("name");
-                double kelvinToCelsius = (double) mainWeather.get("temp") - 273.15;
+                double kelvinToCelsius = mainWeather.getDouble("temp") - 273.15;
                 Integer timeMillis = (Integer) jsonObject.get("dt");
                 Integer sunriseMillis = (Integer) sysObject.get("sunrise");
                 Integer sunsetMillis = (Integer) sysObject.get("sunset");
@@ -218,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        locationManager.removeUpdates(locationListener);
         String cityName = cityText.getText().toString().trim();
         if (!cityName.isEmpty()) {
             PreferenceManager.getDefaultSharedPreferences(this)
@@ -250,7 +256,9 @@ public class MainActivity extends AppCompatActivity {
         return bestLocation;
     }
 
+    @SuppressLint("MissingPermission")
     public void searchWithLocation(View view) {
+        progressBar.setVisibility(View.VISIBLE);
         Location location = getLastKnownLocation();
         if (location != null) {
             Log.e("TAG", "GPS is on");
@@ -258,8 +266,34 @@ public class MainActivity extends AppCompatActivity {
             double longitude = location.getLongitude();
             loadInfo(longitude,latitude);
         }else
-            Toast.makeText(getApplicationContext(), "No location found", Toast.LENGTH_LONG).show();
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000,
+                    10, locationListener);
 
 
     }
+
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            Toast.makeText(getApplicationContext(), "Location found", Toast.LENGTH_LONG).show();
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            loadInfo(longitude,latitude);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Enable GPS", Toast.LENGTH_LONG).show();
+        }
+    };
 }
